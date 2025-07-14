@@ -4,5 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/PlushesMain.unity
+    guid: 507ba9720e7cd40f8abdfeae89da8215
   m_configObjects: {}
