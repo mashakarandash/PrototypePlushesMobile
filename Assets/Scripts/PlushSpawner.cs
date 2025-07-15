@@ -50,44 +50,18 @@ public class PlushSpawner : MonoBehaviour
         }
     }
 
-    /*void SpawnPlushie()
-    {
-        Debug.Log($"➡️ Попытка спавна плюши #{spawnedPlushies + 1}");
-
-        if (spawnedPlushies >= maxPlushies)
-            return;
-
-        float x = Random.Range(-spawnRangeX, spawnRangeX);
-        Vector3 spawnPos = new Vector3(x, plushYOffset, spawnZ);
-
-        GameObject plush = Instantiate(plushPrefab, spawnPos, Quaternion.identity);
-
-        if (plush == null)
-        {
-            Debug.LogWarning("❌ Не удалось заспавнить плюшу!");
-            return;
-        }
-
-        // ✅ Только если успешно заспавнили:
-        spawnedPlushies++;
-
-        // Рандомный масштаб
-        float randomScale = Random.Range(minScale, maxScale);
-        plush.transform.localScale = Vector3.one * randomScale;
-
-        // Рандомная скорость
-        Plushie plushieScript = plush.GetComponent<Plushie>();
-        if (plushieScript != null)
-        {
-            plushieScript.speed = Random.Range(minSpeed, maxSpeed);
-        }
-
-        Debug.Log($"🧸 Заспавнена плюша #{spawnedPlushies}");
-    }*/
+    
 
 
     void SpawnPlushie()
     {
+        GameManager gm = FindObjectOfType<GameManager>();
+        if (gm != null && gm.IsGameOver())
+        {
+            Debug.Log("❌ Игра окончена — плюши больше не спавнятся.");
+            return;
+        }
+
         if (spawnedPlushies >= maxPlushies) return;
 
         float x = Random.Range(-spawnRangeX, spawnRangeX);

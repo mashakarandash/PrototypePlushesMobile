@@ -1,11 +1,10 @@
-
 using UnityEngine;
 
 public class Plushie : MonoBehaviour
 {
     public float speed = 1f;
     public float tapRange = 5f;
-    public float attackRange = 1.5f;
+    public float attackRange = 0.5f;
     public float attackDistance = 1f;  // радиус, в котором плюша "придавливает"
     public float closeAttackDistance = 0.3f;
     public float crushDuration = 5f; // сколько секунд есть на спасение
@@ -40,14 +39,12 @@ public class Plushie : MonoBehaviour
         gameManager = FindObjectOfType<GameManager>();
     }
 
-
-
     void Update()
     {
-        if (isDead) return;
+        if (isDead || gameManager.IsGameOver()) return;
 
         float distance = Vector3.Distance(transform.position, target.position);
-        Debug.Log("📏 Расстояние до игрока: " + distance);
+       // Debug.Log("📏 Расстояние до игрока: " + distance);
 
         if (isCrushing)
         {
@@ -64,7 +61,7 @@ public class Plushie : MonoBehaviour
 
             if (crushTimer <= 0f)
             {
-                gameManager.GameOver("Плюша придавила!");
+               // gameManager.GameOver("Плюша придавила!");
                 Destroy(gameObject);
                 return;
             }
@@ -86,7 +83,7 @@ public class Plushie : MonoBehaviour
             if (!isDead)
             {
                 gameManager.RegisterAttackingPlush(this);
-                Debug.Log($"📌 Плюша начала давить. Всего: {gameManager.GetAttackingCount()}");
+               // Debug.Log($"📌 Плюша начала давить. Всего: {gameManager.GetAttackingCount()}");
             }
         }
 
@@ -95,7 +92,7 @@ public class Plushie : MonoBehaviour
         {
             transform.position = Vector3.MoveTowards(transform.position, target.position, speed * Time.deltaTime);
         }
-        Debug.Log($"[👁 Plushie] isDead={isDead}, isCrushing={isCrushing}, position={transform.position}, distance={Vector3.Distance(transform.position, target.position)}");
+       // Debug.Log($"[👁 Plushie] isDead={isDead}, isCrushing={isCrushing}, position={transform.position}, distance={Vector3.Distance(transform.position, target.position)}");
 
     }
 
@@ -124,12 +121,15 @@ public class Plushie : MonoBehaviour
         isDead = true;
         isCrushing = false;
 
+        Debug.Log($"💀 Die() вызван для плюши {name} ({GetInstanceID()})");
+
         if (gameManager != null)
         {
             gameManager.UnregisterAttackingPlush(this);
+            gameManager.NotifyPlushDestroyed(); // ✅ Добавили
         }
 
-        Destroy(gameObject);
+        Destroy(gameObject); // ✅ Не забудь!
     }
 
     public bool IsAttacking()
@@ -140,5 +140,23 @@ public class Plushie : MonoBehaviour
     public bool IsDead()
     {
         return isDead;
+    }
+
+    public void Freeze()
+    {
+        Debug.Log("❄ Плюша заморожена: " + gameObject.name);
+        // Останавливаем любые действия плюшки
+        isDead = true;
+        isCrushing = false;
+
+        // Если нужно остановить анимации или эффекты, можешь их отключить здесь
+
+        // Отключаем скрипт, чтобы Update больше не вызывался
+        enabled = false;
+    }
+
+    public bool IsCrushing()
+    {
+        return isCrushing;
     }
 }
