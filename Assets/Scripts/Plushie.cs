@@ -44,57 +44,107 @@ public class Plushie : MonoBehaviour
         if (isDead || gameManager.IsGameOver()) return;
 
         float distance = Vector3.Distance(transform.position, target.position);
-       // Debug.Log("📏 Расстояние до игрока: " + distance);
 
+        // 👉 Фаза давления (плюша опускается на игрока)
         if (isCrushing)
         {
-            if (isDead)
-            {
-                isCrushing = false;
-                return;
-            }
-
             crushTimer -= Time.deltaTime;
 
-            // 👉 Можно сделать визуальное давление (плавное "опускание" вниз)
-            transform.position = Vector3.Lerp(transform.position, stopPosition, Time.deltaTime * 2f);
+            // Плавное приближение к позиции давления
+            transform.position = Vector3.MoveTowards(transform.position, stopPosition, Time.deltaTime * 2f);
 
-            if (crushTimer <= 0f)
+            // Когда время давления закончилось — урон игроку и уничтожение
+            if (crushTimer <= 0f && !isDead)
             {
-               // gameManager.GameOver("Плюша придавила!");
+                gameManager.ReduceHP();
                 Destroy(gameObject);
-                return;
             }
 
             return;
         }
 
-        // 👉 Если подошла близко и ещё не атаковала
+        // 👉 Начало атаки — плюша подошла достаточно близко
         if (distance <= attackRange && !isAttacking)
         {
             isAttacking = true;
-            Debug.Log($"🔥 Плюша начала атаку на расстоянии: {distance:F2}");
             isCrushing = true;
             crushTimer = crushDuration;
-            stopPosition = target.position + target.forward * -0.5f;
 
-            stopPosition = target.position + Vector3.up * 0.1f; // немного приподнимается, потом медленно опускается
+            // Ставим точку давления немного перед игроком и чуть выше
+            stopPosition = target.position + target.forward * -0.5f + Vector3.up * 0.1f;
 
-            if (!isDead)
-            {
-                gameManager.RegisterAttackingPlush(this);
-               // Debug.Log($"📌 Плюша начала давить. Всего: {gameManager.GetAttackingCount()}");
-            }
+            gameManager.ReduceHP(); // 💔 Снимаем жизнь сразу при начале атаки
+            gameManager.RegisterAttackingPlush(this);
+
+            Debug.Log($"🔥 Плюша начала атаку. Расстояние: {distance:F2}");
+            return;
         }
 
-        // 👉 Движение к игроку
+        // 👉 Если не атакует и не мёртвая — двигаемся к игроку
         if (!isDead)
         {
             transform.position = Vector3.MoveTowards(transform.position, target.position, speed * Time.deltaTime);
         }
-       // Debug.Log($"[👁 Plushie] isDead={isDead}, isCrushing={isCrushing}, position={transform.position}, distance={Vector3.Distance(transform.position, target.position)}");
-
     }
+
+
+    /* void Update()
+     {
+         if (isDead || gameManager.IsGameOver()) return;
+
+         float distance = Vector3.Distance(transform.position, target.position);
+        // Debug.Log("📏 Расстояние до игрока: " + distance);
+
+         if (isCrushing)
+         {
+             if (isDead)
+             {
+                 isCrushing = false;
+                 return;
+             }
+
+             crushTimer -= Time.deltaTime;
+
+             // 👉 Можно сделать визуальное давление (плавное "опускание" вниз)
+             transform.position = Vector3.Lerp(transform.position, stopPosition, Time.deltaTime * 2f);
+
+             if (crushTimer <= 0f)
+             {
+                 gameManager.ReduceHP();
+                 // gameManager.GameOver("Плюша придавила!");
+                 Destroy(gameObject);
+                 return;
+             }
+
+             return;
+         }
+
+         // 👉 Если подошла близко и ещё не атаковала
+         if (distance <= attackRange && !isAttacking)
+         {
+             isAttacking = true;
+             Debug.Log($"🔥 Плюша начала атаку на расстоянии: {distance:F2}");
+             isCrushing = true;
+             crushTimer = crushDuration;
+             stopPosition = target.position + target.forward * -0.5f + Vector3.up * 0.1f;
+
+             if (!isDead)
+             {
+                 gameManager.ReduceHP(); // 💔 Снимаем жизнь, когда плюша начинает атаку
+                 gameManager.RegisterAttackingPlush(this);
+
+             }
+         }
+
+         // 👉 Движение к игроку
+         if (!isDead)
+         {
+             transform.position = Vector3.MoveTowards(transform.position, target.position, speed * Time.deltaTime);
+         }
+
+
+     }*/
+
 
     public void Tap()
     {

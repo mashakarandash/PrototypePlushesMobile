@@ -50,9 +50,6 @@ public class PlushSpawner : MonoBehaviour
         }
     }
 
-    
-
-
     void SpawnPlushie()
     {
         GameManager gm = FindObjectOfType<GameManager>();
@@ -83,7 +80,7 @@ public class PlushSpawner : MonoBehaviour
             plushieScript.speed = Random.Range(minSpeed, maxSpeed);
         }
 
-        spawnedPlushies++; // 💥 Важно!
+        spawnedPlushies++; 
     }
 
 

@@ -175,7 +175,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 1
   tapRange: 40
-  attackRange: 0.5
+  attackRange: 1
   attackDistance: 1
   closeAttackDistance: 0.5
   crushDuration: 5

@@ -9,8 +9,12 @@ public class GameManager : MonoBehaviour
 
     private UIManager uiManager;
 
-    public int totalPlushiesToSpawn = 20; // можно задать через инспектор
     public GameObject gameOverPanel;
+    public GameObject pausePanel;
+    public GameObject pauseButton;
+
+    public int totalPlushiesToSpawn = 20; // можно задать через инспектор
+    public int playerHP = 3; // Кол-во жизней
 
     void Start()
     {
@@ -67,7 +71,7 @@ public class GameManager : MonoBehaviour
         Plushie[] allPlushies = FindObjectsOfType<Plushie>();
         foreach (Plushie plush in allPlushies)
         {
-            plush.Freeze(); // ← вот это должно быть обязательно
+            plush.Freeze(); 
         }
 
         if (uiManager != null)
@@ -84,6 +88,23 @@ public class GameManager : MonoBehaviour
     public bool IsGameOver()
     {
         return isGameOver;
+    }
+
+    public void ReduceHP()
+    {
+        playerHP--;
+
+        if (uiManager != null)
+        {
+            uiManager.UpdateHearts(playerHP); // 💔 обновляем интерфейс
+        }
+
+        Debug.Log($"💔 Игрок потерял жизнь! Осталось: {playerHP}");
+
+        if (playerHP <= 0)
+        {
+            GameOver("У игрока кончились жизни!");
+        }
     }
 
     public void NotifyPlushDestroyed()
@@ -113,6 +134,12 @@ public class GameManager : MonoBehaviour
         {
             uiManager.ShowWin();
         }
+    }
+
+    public void StartGameplay()
+    {
+        Time.timeScale = 1f;
+        Debug.Log("▶️ Игра началась");
     }
 }
 
